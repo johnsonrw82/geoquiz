@@ -1,6 +1,7 @@
 package com.jrw82.android.geoquiz;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +15,9 @@ public class GeoQuizActivity extends Activity {
 
     private static final String TAG = "GeoQuizActivity";
     private static final String KEY_INDEX = "questionIndex";
+    private static final String CHEATER_INDEX = "isCheaterIndex";
+    private static final String CHEATER_BANK_INDEX = "cheaterBankIndex";
+
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -30,7 +34,16 @@ public class GeoQuizActivity extends Activity {
             new TrueFalse(R.string.question_asia, true)
     };
 
+    private boolean[] mCheaterBank = new boolean[] {
+            false,
+            false,
+            false,
+            false,
+            false
+    };
+
     private int mCurrentIndex = 0;
+    private boolean mIsCheater;
 
     /**
      * Called when the activity is first created.
@@ -48,6 +61,8 @@ public class GeoQuizActivity extends Activity {
         // assign the index, if it exists
         if (savedInstanceState != null ) {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
+            mIsCheater = savedInstanceState.getBoolean(CHEATER_INDEX, false);
+            mCheaterBank = savedInstanceState.getBooleanArray(CHEATER_BANK_INDEX);
         }
 
         mTrueButton = (Button)findViewById(R.id.true_button);
@@ -102,6 +117,9 @@ public class GeoQuizActivity extends Activity {
             @Override
             public void onClick(View v) {
                 // start cheat activity
+                Intent i = new Intent(GeoQuizActivity.this, CheatActivity.class);
+                i.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, mQuestionBank[mCurrentIndex].isTrueQuestion());
+                startActivityForResult(i, 0);
             }
         });
     }
@@ -111,6 +129,8 @@ public class GeoQuizActivity extends Activity {
         super.onSaveInstanceState(savedInstanceState);
         Log.i(TAG, "onSaveInstanceState(Bundle) called");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+        savedInstanceState.putBoolean(CHEATER_INDEX, mIsCheater);
+        savedInstanceState.putBooleanArray(CHEATER_BANK_INDEX, mCheaterBank);
     }
 
     @Override
@@ -143,6 +163,15 @@ public class GeoQuizActivity extends Activity {
         Log.d(TAG, "onStart() called");
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult(int, int, Intent) called");
+        if ( data != null) {
+            mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+            mCheaterBank[mCurrentIndex] = mIsCheater;  // set the corresponding cheat state for this question.
+        }
+
+    }
 
     private void previousQuestion() {
         indexDown();
@@ -165,21 +194,26 @@ public class GeoQuizActivity extends Activity {
     private void updateQuestionText() {
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);
+        mIsCheater = mCheaterBank[mCurrentIndex];  // set current cheater state
     }
 
     private void checkAnswer(boolean userPressedTrue) {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
 
-        int messageResId = 0;
+        int messageResId;
 
-        // user pressed the correct answer
-        if ( userPressedTrue == answerIsTrue ) {
-            messageResId = R.string.toast_correct;
+        // check if the person is a cheater or not
+        if ( mIsCheater ) {
+            messageResId = R.string.judgment_toast;
         }
         else {
-            messageResId = R.string.toast_incorrect;
+            // user pressed the correct answer
+            if (userPressedTrue == answerIsTrue) {
+                messageResId = R.string.toast_correct;
+            } else {
+                messageResId = R.string.toast_incorrect;
+            }
         }
-
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT).show();
     }
 

@@ -5,3 +5,7 @@ scopes
 encodings.xml
 modules.xml
 vcs.xml
+target
+/GeoQuiz/*.iml
+/GeoQuiz-it/*.iml
+/*.iml
