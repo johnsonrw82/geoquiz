@@ -1,18 +1,20 @@
 package com.jrw82.android.geoquiz;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class GeoQuizActivity extends Activity {
-
     private static final String TAG = "GeoQuizActivity";
     private static final String KEY_INDEX = "questionIndex";
     private static final String CHEATER_INDEX = "isCheaterIndex";
@@ -51,6 +53,7 @@ public class GeoQuizActivity extends Activity {
      * previously being shut down then this Bundle contains the data it most 
      * recently supplied in onSaveInstanceState(Bundle). <b>Note: Otherwise it is null.</b>
      */
+    @TargetApi(11)
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +66,12 @@ public class GeoQuizActivity extends Activity {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
             mIsCheater = savedInstanceState.getBoolean(CHEATER_INDEX, false);
             mCheaterBank = savedInstanceState.getBooleanArray(CHEATER_BANK_INDEX);
+        }
+
+        // action bar (run on Honeycomb or later)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            ActionBar actionBar = getActionBar();
+            actionBar.setSubtitle(R.string.action_bar_subtitle);
         }
 
         mTrueButton = (Button)findViewById(R.id.true_button);

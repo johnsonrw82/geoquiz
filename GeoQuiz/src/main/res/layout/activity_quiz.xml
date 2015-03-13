@@ -1,5 +1,5 @@
 <LinearLayout
-        android:orientation="vertical"
+        xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android"
         android:gravity="center">
@@ -36,7 +36,7 @@
                 android:id="@+id/previous_button"
                 android:text="@string/previous_button"
                 android:drawableLeft="@drawable/arrow_left1" android:drawablePadding="4dp"
-                android:contentDescription="@string/previous_button"/>
+                android:contentDescription="@string/previous_button" tools:ignore="InconsistentLayout"/>
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -10,6 +10,7 @@
     <string name="previous_button">Previous</string>
     <string name="toast_correct">Correct!</string>
     <string name="toast_incorrect">Incorrect!</string>
+    <string name="action_bar_subtitle">Bodies of Water</string>
 
     <!-- question set -->
     <string name="question_oceans">The Pacific Ocean is larger than the Atlantic Ocean.</string>
